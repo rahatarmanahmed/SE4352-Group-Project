@@ -7,7 +7,7 @@ public class InputParser {
 		Scanner scanner = new Scanner(input);
 		while(scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-			parsedInput.add(new CircularShift(line.split(" ")));
+			parsedInput.add(new CircularShift(line.split("\\s+")));
 		}
 		return parsedInput;
 	}
