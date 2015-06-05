@@ -12,6 +12,7 @@ public class CircularShift implements Comparable<CircularShift>{
 	}
 
 	public CircularShift shift() {
+		@SuppressWarnings("unchecked")
 		LinkedList<String> shiftedWords = (LinkedList<String>) words.clone();
 		shiftedWords.addLast(shiftedWords.removeFirst());
 		return new CircularShift(shiftedWords);

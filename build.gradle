@@ -4,7 +4,7 @@ apply plugin: 'application'
 defaultTasks 'clean', 'build'
 
 mainClassName = 'Main'
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 version = '1.0.0'
 
 // Sends standard input from gradle to the program
