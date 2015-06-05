@@ -1,0 +1,47 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+defaultTasks 'clean', 'build'
+
+mainClassName = 'Main'
+sourceCompatibility = 1.7
+version = '1.0.0'
+
+// Sends standard input from gradle to the program
+// So you can just do `gradle run < file`
+run {
+    standardInput = System.in
+}
+
+// Uncomment if you want to add dependencies
+// repositories {
+//     mavenCentral()
+// }
+
+// dependencies {
+// }
+
+jar {
+
+    // Uncomment if you want to include dependencies in the jar
+    // from {
+    //     configurations.runtime.collect {
+    //         it.isDirectory() ? it : zipTree(it)
+    //     }
+
+    //     configurations.compile.collect {
+    //         it.isDirectory() ? it : zipTree(it)
+    //     }
+    // }
+
+    manifest {
+        attributes 'Main-Class': mainClassName,
+			'Built-By': System.getProperty('user.name'),
+	        'Built-Date': new Date(),
+	        'Built-JDK': System.getProperty('java.version')
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+
+    baseName = 'KWIC'
+}
