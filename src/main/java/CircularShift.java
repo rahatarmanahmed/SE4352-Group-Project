@@ -2,31 +2,11 @@ import java.io.*;
 import java.util.*;
 
 public class CircularShift implements Comparable<CircularShift>{
-	LinkedList<String> words;
-	public CircularShift(String[] words) {
-		this.words = new LinkedList<>(Arrays.asList(words));
-	}
-
-	public CircularShift(LinkedList<String> words) {
-		this.words = words;
-	}
-
-	public CircularShift shift() {
-		@SuppressWarnings("unchecked")
-		LinkedList<String> shiftedWords = (LinkedList<String>) words.clone();
-		shiftedWords.addLast(shiftedWords.removeFirst());
-		return new CircularShift(shiftedWords);
-	}
-
-	public Set<CircularShift> allShifts() {
-		Set<CircularShift> shifts = new TreeSet<>();
-		shifts.add(this);
-		CircularShift lastShift = this;
-		for(int k=1; k<words.size(); k++) {
-			lastShift = lastShift.shift();
-			shifts.add(lastShift);
-		}
-		return shifts;
+	Line originalLine;
+	int startIndex;
+	public CircularShift(Line line, int index) {
+		this.originalLine = line;
+		this.startIndex = index;
 	}
 
 	public int compareTo(CircularShift other) {
@@ -35,8 +15,14 @@ public class CircularShift implements Comparable<CircularShift>{
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for(String word : words)
-			builder.append(word).append(' ');
+		// Append words from start index to end of line
+		for(int k=startIndex; k<originalLine.getNumWords(); k++) {
+			builder.append(originalLine.getWord(k)).append(' ');
+		}
+		// Append words from start of line to just before start index
+		for(int k=0; k<startIndex; k++) {
+			builder.append(originalLine.getWord(k)).append(' ');
+		}
 		return builder.substring(0, builder.length() - 1);
 	}
 }
