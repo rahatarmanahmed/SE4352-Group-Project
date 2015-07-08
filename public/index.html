@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Cyberminer</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.min.js"></script>
+</head>
+<body ng-app="cyberminer">
+    <h1>Cyberminer Search Engine</h1>
+    <a href="#/">Go to Search</a>
+    <a href="#/manage">Go to Manage</a>
+    <div ng-view></div>
+
+    <script type="text/ng-template" id="/search.html">
+        <div>
+            TODO: implement search
+            <input type="text"/>
+        </div>
+    </script>
+    <script type="text/ng-template" id="/manage.html">
+        <div>
+            <div>
+                <h2>Add New Index</h2>
+
+                <form ng-submit="addIndex(newIndex)">
+                    <label for="url">URL:</label>
+                    <input type="url" id="url" required ng-model="newIndex.url"/>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" required ng-model="newIndex.description"/>
+                    <button>Add</button>
+                </form>
+
+            </div>
+            <h2>Manage Existing Indices</h2>
+            <div ng-repeat="index in indexes">
+                <h3><a ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
+                <p>{{ index.description }}</p>
+                <a href="" ng-click="deleteIndex(index.id)">Delete</a>
+            </div>
+        </div>
+    </script>
+    <script>
+        var app = angular.module('cyberminer', ['ngRoute']);
+        app.controller('MainCtrl', function($scope, $http) {
+            $scope.currentView = 'search';
+            $scope.setView = function(v) {
+                $scope.currentView = v;
+            }
+
+            console.log($scope);
+        });
+        app.controller('ManageCtrl', function($scope, $http) {
+            $http.get('/index').then(function(result) {
+                $scope.indexes = result.data
+            });
+            $scope.newIndex = {};
+            $scope.addIndex = function(index) {
+                $http.post('/index', index).then(function(result) {
+                    location.reload();
+                });
+            }
+            $scope.deleteIndex = function(id) {
+                $http.delete('/index/'+id).then(function(result) {
+                    location.reload();
+                });
+            }
+        });
+        app.config(function($routeProvider) {
+            $routeProvider.when('/', {
+                controller: 'MainCtrl',
+                templateUrl: '/search.html'
+            })
+            .when('/manage', {
+                controller: 'ManageCtrl',
+                templateUrl: '/manage.html'
+            })
+            .otherwise({redirectTo: '/'});
+        });
+
+    </script>
+</body>
+</html>

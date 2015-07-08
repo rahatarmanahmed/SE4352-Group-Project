@@ -5,16 +5,36 @@ import java.util.*;
 * A class that represents an input line.
 */
 public class Line {
+
+	/**
+	 * The url of the index
+	 */
+	private String url;
+
 	/**
 	* The internal storage for the words of the line.
 	*/
 	private String[] words;
 
 	/**
+	 * The number of times the url was clicked.
+	 */
+	private int clicks = 0;
+
+	/**
 	* The constructor to create a line from an input line.
 	*/
-	public Line(String line) {
-		words = line.split("\\s+");
+	public Line(String url, String description) {
+		this.url = url;
+		this.words = description.split("\\s+");
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getDescription() {
+		return String.join(" ", words);
 	}
 
 	/**

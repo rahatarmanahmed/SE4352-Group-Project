@@ -4,34 +4,37 @@ apply plugin: 'application'
 defaultTasks 'clean', 'build'
 
 mainClassName = 'Main'
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 // Sends standard input from gradle to the program
 // So you can just do `gradle run < file`
-run {
-    standardInput = System.in
-}
+//run {
+//    standardInput = System.in
+//}
 
 // Uncomment if you want to add dependencies
-// repositories {
-//     mavenCentral()
-// }
+ repositories {
+     mavenCentral()
+ }
 
-// dependencies {
-// }
+ dependencies {
+     compile 'com.sparkjava:spark-core:2.2'
+     compile 'org.xerial:sqlite-jdbc:3.7.2'
+     compile 'com.google.code.gson:gson:2.3.1'
+ }
 
 jar {
 
-    // Uncomment if you want to include dependencies in the jar
-    // from {
-    //     configurations.runtime.collect {
-    //         it.isDirectory() ? it : zipTree(it)
-    //     }
+//     Uncomment if you want to include dependencies in the jar
+     from {
+         configurations.runtime.collect {
+             it.isDirectory() ? it : zipTree(it)
+         }
 
-    //     configurations.compile.collect {
-    //         it.isDirectory() ? it : zipTree(it)
-    //     }
-    // }
+         configurations.compile.collect {
+             it.isDirectory() ? it : zipTree(it)
+         }
+     }
 
     manifest {
         attributes 'Main-Class': mainClassName,
