@@ -40,7 +40,6 @@ public class Main {
         });
         post("/search", (req, res) -> {
             JsonObject body = new JsonParser().parse(req.body()).getAsJsonObject();
-            // TODO: test search queery
             String[] keywords = gson.fromJson(body.get("keywords"), String[].class);
             return Database.search(keywords, body.get("operation").getAsString(), body.get("caseSensitive").getAsBoolean());
         });
@@ -51,6 +50,11 @@ public class Main {
                 res.status(500);
                 return null;
             }
+        });
+
+        post("/autocomplete", (req, res) -> {
+            JsonObject body = new JsonParser().parse(req.body()).getAsJsonObject();
+            return Database.autoComplete(body.get("query").getAsString());
         });
 	}
 }

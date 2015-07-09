@@ -150,4 +150,29 @@ public class Database {
         }
         return true;
     }
+
+    public static synchronized JsonArray autoComplete(String query) {
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM shifts WHERE shifted_description LIKE ? || '%'"
+            );
+            statement.setString(1, query);
+            try (ResultSet rs = statement.executeQuery()) {
+                JsonArray json = new JsonArray();
+                while(rs.next()) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("lineId", rs.getString("lineId"));
+                    obj.addProperty("id", rs.getString("id"));
+                    obj.addProperty("shifted_description", rs.getString("shifted_description"));
+                    json.add(obj);
+                }
+                return json;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

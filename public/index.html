@@ -6,9 +6,11 @@
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
+    <script src="bower_components/allmighty-autocomplete/script/autocomplete.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/allmighty-autocomplete/style/autocomplete.css"/>
 </head>
 <body ng-app="cyberminer">
     <h1>Cyberminer Search Engine</h1>
@@ -24,7 +26,7 @@
                     <option value="AND">AND</option>
                     <option value="NOT">NOT</option>
                 </select>
-                <input type="text" ng-model="keywords" id="keywords" required/>
+                <autocomplete type="text" ng-model="keywords" id="keywords" data="autocomplete" on-type="updateAutocomplete" required/>
                 <input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/><label for="caseSensitive">Case Sensitive</label>
                 <button>Search</button>
             </form>
@@ -65,7 +67,7 @@
         </div>
     </script>
     <script>
-        var app = angular.module('cyberminer', ['ngRoute']);
+        var app = angular.module('cyberminer', ['ngRoute', 'autocomplete']);
         app.controller('MainCtrl', function($scope, $http) {
             $scope.predicate = '-clicks';
             $scope.query = {
@@ -82,6 +84,12 @@
             $scope.click = function(id) {
                 $http.get('/click/'+id);
             }
+            $scope.autocomplete = [];
+            $scope.updateAutocomplete = function(query) {
+                $http.post('/autocomplete', {query: query}).then(function(results) {
+                    $scope.autocomplete = results.data.map(function(i) { return i.shifted_description });
+                });
+            };
             console.log($scope);
         });
         app.controller('ManageCtrl', function($scope, $http) {
