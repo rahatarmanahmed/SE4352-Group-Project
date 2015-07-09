@@ -12,35 +12,57 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="bower_components/allmighty-autocomplete/style/autocomplete.css"/>
 </head>
-<body ng-app="cyberminer">
-    <h1>Cyberminer Search Engine</h1>
-    <a href="#/">Go to Search</a>
-    <a href="#/manage">Go to Manage</a>
+<body ng-app="cyberminer" ng-controller="MainCtrl">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#/">Cyberminer Search Engine</a>
+            </div>
+            <div>
+                <form class="navbar-form navbar-left" ng-submit="search(query)" role="search">
+                    <div class="form-group">
+                        <autocomplete attr-input-class="form-control" type="text" ng-model="keywords" id="keywords" data="autocomplete" on-type="updateAutocomplete" required/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Search</button>
+                    <div class="form-group">
+                        <select ng-model="query.operation" id="operation" required>
+                            <option value="OR" selected>OR</option>
+                            <option value="AND">AND</option>
+                            <option value="NOT">NOT</option>
+                        </select>
+                    </div>
+                    <div class="form-group checkbox navbar-btn" style="margin-left:8px;">
+                        <label class="navbar-link" for="caseSensitive"><input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/> Case Sensitive</label>
+                    </div>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#/manage">Manage</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div ng-view></div>
 
     <script type="text/ng-template" id="/search.html">
-        <div>
-            <form ng-submit="search(query)">
-                <select ng-model="query.operation" id="operation" required>
-                    <option value="OR" selected>OR</option>
-                    <option value="AND">AND</option>
-                    <option value="NOT">NOT</option>
-                </select>
-                <autocomplete type="text" ng-model="keywords" id="keywords" data="autocomplete" on-type="updateAutocomplete" required/>
-                <input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/><label for="caseSensitive">Case Sensitive</label>
-                <button>Search</button>
-            </form>
-            <div>
+        <div class="container">
+            <!--<form ng-submit="search(query)">-->
+
+                <!-- -->
+                <!--<input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/><label for="caseSensitive">Case Sensitive</label>-->
+                <!--<button>Search</button>-->
+            <!--</form>-->
+            <div class="row">
+                <label for="predicate">Sort By: </label>
                 <select ng-model="predicate" id="predicate" required>
                     <option value="-clicks" selected>Most Frequently Accessed</option>
                     <option value="clicks">Least Frequently Accessed</option>
                     <option value="url">Alphabetic Descending</option>
                     <option value="-url">Alphabetic Ascending</option>
                 </select>
-                <div ng-repeat="index in results | orderBy:predicate">
-                    <h3><a ng-click="click(index.id)" target="_blank" ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
-                    <p>{{ index.description }}</p>
-                </div>
+            </div>
+            <div class="row" ng-repeat="index in results | orderBy:predicate">
+                <h3><a ng-click="click(index.id)" target="_blank" ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
+                <p>{{ index.description }}</p>
             </div>
         </div>
     </script>
@@ -68,7 +90,7 @@
     </script>
     <script>
         var app = angular.module('cyberminer', ['ngRoute', 'autocomplete']);
-        app.controller('MainCtrl', function($scope, $http) {
+        app.controller('MainCtrl', function($scope, $http, $location) {
             $scope.predicate = '-clicks';
             $scope.query = {
                 operation: "OR",
@@ -76,6 +98,7 @@
                 keywords: []
             }
             $scope.search = function(query) {
+                $location.path('/');
                 query.keywords = $scope.keywords.trim().split(/\s+/g);
                 $http.post('/search', query).then(function(result) {
                     $scope.results = result.data;
@@ -110,7 +133,6 @@
         });
         app.config(function($routeProvider) {
             $routeProvider.when('/', {
-                controller: 'MainCtrl',
                 templateUrl: '/search.html'
             })
             .when('/manage', {
