@@ -45,12 +45,6 @@
 
     <script type="text/ng-template" id="/search.html">
         <div class="container">
-            <!--<form ng-submit="search(query)">-->
-
-                <!-- -->
-                <!--<input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/><label for="caseSensitive">Case Sensitive</label>-->
-                <!--<button>Search</button>-->
-            <!--</form>-->
             <div class="row">
                 <label for="predicate">Sort By: </label>
                 <select ng-model="predicate" id="predicate" required>
@@ -63,28 +57,38 @@
             <div class="row" ng-repeat="index in results | orderBy:predicate">
                 <h3><a ng-click="click(index.id)" target="_blank" ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
                 <p>{{ index.description }}</p>
+                <hr/>
             </div>
         </div>
     </script>
     <script type="text/ng-template" id="/manage.html">
-        <div>
-            <div>
+        <div class="container">
+            <div class="row">
                 <h2>Add New Index</h2>
 
-                <form ng-submit="addIndex(newIndex)">
-                    <label for="url">URL:</label>
-                    <input type="url" id="url" required ng-model="newIndex.url"/>
-                    <label for="description">Description:</label>
-                    <input type="text" id="description" required ng-model="newIndex.description"/>
-                    <button>Add</button>
+                <form class="form-inline" ng-submit="addIndex(newIndex)">
+                    <div class="form-group">
+                        <label for="url">URL:</label>
+                        <input class="form-control" type="url" id="url" required ng-model="newIndex.url"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input class="form-control" type="text" id="description" required ng-model="newIndex.description"/>
+                    </div>
+
+                    <button class="btn btn-default">Add</button>
                 </form>
 
             </div>
-            <h2>Manage Existing Indices</h2>
-            <div ng-repeat="index in indexes">
+            <div class="row">
+                <hr/>
+                <h2>Manage Existing Indices</h2>
+            </div>
+            <div class="row" ng-repeat="index in indexes">
                 <h3><a ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
                 <p>{{ index.description }}</p>
-                <a href="" ng-click="deleteIndex(index.id)">Delete</a>
+                <a href="" class="btn btn-danger" ng-click="deleteIndex(index.id)">Delete</a>
+                <hr/>
             </div>
         </div>
     </script>
