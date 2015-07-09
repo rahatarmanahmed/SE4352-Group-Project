@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -15,7 +16,7 @@ public class Main {
 	*/
 	public static void main(String[] args) throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
-
+        Gson gson = new Gson();
         port(8000);
         externalStaticFileLocation("./public");
         // TODO: make endpoints
@@ -30,12 +31,18 @@ public class Main {
             }
         });
         delete("/index/:id", (req, res) -> {
-            if(Database.delete(Integer.parseInt(req.params(":id")))) {
+            if (Database.delete(Integer.parseInt(req.params(":id")))) {
                 return true;
             } else {
                 res.status(500);
                 return null;
             }
+        });
+        post("/search", (req, res) -> {
+            JsonObject body = new JsonParser().parse(req.body()).getAsJsonObject();
+            // TODO: test search queery
+            String[] keywords = gson.fromJson(body.get("keywords"), String[].class);
+            return Database.search(keywords, body.get("operation").getAsString());
         });
 
 	}

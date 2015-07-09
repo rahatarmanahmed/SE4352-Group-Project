@@ -91,4 +91,47 @@ public class Database {
             return null;
         }
     }
+
+    public static synchronized JsonArray search(String[] keywords, String operation) {
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
+            String sql = "SELECT * FROM lines WHERE";
+            for(int k=0; k<keywords.length; k++) {
+                switch(operation.toUpperCase()) {
+                    case "OR":
+                        if(k != 0) sql += " OR";
+                        sql += " id IN (SELECT lineId FROM shifts WHERE shifted_description LIKE ? || '%')";
+                        break;
+                    case "AND":
+                        if(k != 0) sql += " AND";
+                        sql += " id IN (SELECT lineId FROM shifts WHERE shifted_description LIKE ? || '%')";
+                        break;
+                    case "NOT":
+                        if(k != 0) sql += " AND";
+                        sql += " id NOT IN (SELECT lineId FROM shifts WHERE shifted_description LIKE ? || '%')";
+                        break;
+                }
+
+            }
+            PreparedStatement statement = connection.prepareStatement(sql);
+            for(int k=1; k<=keywords.length; k++) {
+                statement.setString(k, keywords[k-1]);
+            }
+            try (ResultSet rs = statement.executeQuery()) {
+                JsonArray json = new JsonArray();
+                while(rs.next()) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("id", rs.getString("id"));
+                    obj.addProperty("url", rs.getString("url"));
+                    obj.addProperty("description", rs.getString("description"));
+                    obj.addProperty("clicks", rs.getString("clicks"));
+                    json.add(obj);
+                }
+                return json;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
