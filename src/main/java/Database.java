@@ -92,8 +92,9 @@ public class Database {
         }
     }
 
-    public static synchronized JsonArray search(String[] keywords, String operation) {
+    public static synchronized JsonArray search(String[] keywords, String operation, Boolean caseSensitive) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
+            if(caseSensitive) connection.prepareStatement("PRAGMA case_sensitive_like = true").execute();
             String sql = "SELECT * FROM lines WHERE";
             for(int k=0; k<keywords.length; k++) {
                 switch(operation.toUpperCase()) {
@@ -133,5 +134,20 @@ public class Database {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static synchronized boolean incrementClicks(int id) {
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE lines SET clicks = clicks + 1 WHERE id = ?"
+            );
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

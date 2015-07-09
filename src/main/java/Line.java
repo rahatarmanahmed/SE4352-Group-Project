@@ -58,7 +58,9 @@ public class Line {
 	public Set<CircularShift> getShifts() {
 		Set<CircularShift> shifts = new HashSet<>();
 		for(int k=0; k<words.length; k++) {
-			shifts.add(new CircularShift(this, k));
+			CircularShift shift = new CircularShift(this, k);
+			if(!NoiseFilter.isNoise(shift))
+				shifts.add(shift);
 		}
 		return shifts;
 	}

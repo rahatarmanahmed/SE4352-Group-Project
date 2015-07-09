@@ -42,8 +42,15 @@ public class Main {
             JsonObject body = new JsonParser().parse(req.body()).getAsJsonObject();
             // TODO: test search queery
             String[] keywords = gson.fromJson(body.get("keywords"), String[].class);
-            return Database.search(keywords, body.get("operation").getAsString());
+            return Database.search(keywords, body.get("operation").getAsString(), body.get("caseSensitive").getAsBoolean());
         });
-
+        get("/click/:id", (req, res) -> {
+            if (Database.incrementClicks(Integer.parseInt(req.params(":id")))) {
+                return true;
+            } else {
+                res.status(500);
+                return null;
+            }
+        });
 	}
 }

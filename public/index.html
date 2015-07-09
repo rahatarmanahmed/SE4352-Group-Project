@@ -25,11 +25,18 @@
                     <option value="NOT">NOT</option>
                 </select>
                 <input type="text" ng-model="keywords" id="keywords" required/>
+                <input type="checkbox" id="caseSensitive" ng-model="query.caseSensitive"/><label for="caseSensitive">Case Sensitive</label>
                 <button>Search</button>
             </form>
             <div>
-                <div ng-repeat="index in results">
-                    <h3><a ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
+                <select ng-model="predicate" id="predicate" required>
+                    <option value="-clicks" selected>Most Frequently Accessed</option>
+                    <option value="clicks">Least Frequently Accessed</option>
+                    <option value="url">Alphabetic Descending</option>
+                    <option value="-url">Alphabetic Ascending</option>
+                </select>
+                <div ng-repeat="index in results | orderBy:predicate">
+                    <h3><a ng-click="click(index.id)" target="_blank" ng-href="{{(index.url.startsWith('http')?'':'http://')+index.url}}">{{ index.url }}</a></h3>
                     <p>{{ index.description }}</p>
                 </div>
             </div>
@@ -60,8 +67,10 @@
     <script>
         var app = angular.module('cyberminer', ['ngRoute']);
         app.controller('MainCtrl', function($scope, $http) {
+            $scope.predicate = '-clicks';
             $scope.query = {
                 operation: "OR",
+                caseSensitive: true,
                 keywords: []
             }
             $scope.search = function(query) {
@@ -69,6 +78,9 @@
                 $http.post('/search', query).then(function(result) {
                     $scope.results = result.data;
                 });
+            }
+            $scope.click = function(id) {
+                $http.get('/click/'+id);
             }
             console.log($scope);
         });
