@@ -1,2 +1,6 @@
 https://www.google.com/intl/en/about/ Google’s mission is to organize the world’s information and make it universally accessible and useful
 http://www.utdallas.edu/about/ The University of Texas at Dallas is an innovative institution in the heart of North Texas on the path to achieving Tier One national research university status
+http://about.twitter.com/ Twitter is your window to the world. Get real-time updates about what matters to you.
+https://www.facebook.com/about You’re with friends wherever you go, whatever you do, stay close to the people who matter.
+http://arstechina.com/about-us/ Ars Technica was founded in 1998 when Founder & Editor-in-Chief Ken Fisher announced his plans for starting a publication devoted to technology that would cater to what he called "alpha geeks": technologists and IT professionals.
+http://rahatah.me/d Hi, I am a software developer. I have 6.78102275 years of experience developing software. Currently I am studying Computer Science and Software Engineering at UTD.
