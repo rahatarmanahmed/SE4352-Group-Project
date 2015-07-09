@@ -45,5 +45,5 @@ jar {
 
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 
-    baseName = 'KWIC'
+    baseName = 'Cyberminer'
 }
