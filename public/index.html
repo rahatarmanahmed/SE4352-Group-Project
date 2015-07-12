@@ -13,12 +13,14 @@
     <link rel="stylesheet" href="bower_components/allmighty-autocomplete/style/autocomplete.css"/>
 </head>
 <body ng-app="cyberminer" ng-controller="MainCtrl">
+    <!-- Navbar -->
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="#/">Cyberminer Search Engine</a>
             </div>
             <div>
+                <!-- Search Form -->
                 <form class="navbar-form navbar-left" ng-submit="search(query)" role="search">
                     <div class="form-group">
                         <autocomplete attr-input-class="form-control" type="text" ng-model="keywords" data="autocomplete" on-type="updateAutocomplete" attr-input-id="keywords" autocomplete-required/>
@@ -43,6 +45,7 @@
     </nav>
     <div ng-view></div>
 
+    <!-- Search View -->
     <script type="text/ng-template" id="/search.html">
         <div class="container">
             <div class="row">
@@ -61,6 +64,8 @@
             </div>
         </div>
     </script>
+
+    <!-- Manage View -->
     <script type="text/ng-template" id="/manage.html">
         <div class="container">
             <div class="row">
@@ -100,13 +105,28 @@
     </script>
     <script>
         var app = angular.module('cyberminer', ['ngRoute', 'autocomplete']);
+
+        /**
+         * Handles the search aspects of the front end.
+         */
         app.controller('MainCtrl', function($scope, $http, $location) {
+            /**
+             * What property to sort by.
+             */
             $scope.predicate = '-clicks';
+
+            /**
+             * The search query.
+             */
             $scope.query = {
                 operation: "OR",
                 caseSensitive: true,
                 keywords: []
             }
+
+            /**
+             * Sends search query to server and populates results.
+             */
             $scope.search = function(query) {
                 if(!$scope.keywords) return;
                 $location.path('/');
@@ -115,27 +135,57 @@
                     $scope.results = result.data;
                 });
             }
+
+            /**
+             * Increments click counter for line.
+             */
             $scope.click = function(id) {
                 $http.get('/click/'+id);
             }
+
+            /**
+             * The autocomplete suggestions.
+             */
             $scope.autocomplete = [];
+
+            /**
+             * Sends a request to the server for autocomplete suggestions.
+             */
             $scope.updateAutocomplete = function(query) {
                 $http.post('/autocomplete', {query: query}).then(function(results) {
                     $scope.autocomplete = results.data.map(function(i) { return i.shifted_description });
                 });
             };
-            console.log($scope);
         });
+
+        /**
+         * Handles the management aspects of the front end.
+         */
         app.controller('ManageCtrl', function($scope, $http, $q) {
+            /**
+             * The list of all indices.
+             */
             $http.get('/index').then(function(result) {
                 $scope.indexes = result.data
             });
+
+            /**
+             * The new index to add.
+             */
             $scope.newIndex = {};
+
+            /**
+             * Sends a new index to the server to be added.
+             */
             $scope.addIndex = function(index) {
                 $http.post('/index', index).then(function(result) {
                     location.reload();
                 });
             }
+
+            /**
+             * Reads a file and sends multiple add index requests to the server.
+             */
             $scope.batchAddIndices = function() {
                 var file = angular.element('#file');
                 if(!file) return;
@@ -157,15 +207,21 @@
                     });
                 }
                 var indices = reader.readAsText(file[0].files[0]);
-
-
             };
+
+            /**
+             * Sends a request to the server to delete an index.
+             */
             $scope.deleteIndex = function(id) {
                 $http.delete('/index/'+id).then(function(result) {
                     location.reload();
                 });
             }
         });
+
+        /**
+         * Configures the routes of the front end.
+         */
         app.config(function($routeProvider) {
             $routeProvider.when('/', {
                 templateUrl: '/search.html'

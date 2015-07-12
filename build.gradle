@@ -47,3 +47,22 @@ jar {
 
     baseName = 'Cyberminer'
 }
+
+task copyPublic(type: Copy) {
+    from 'public/'
+    into 'build/libs/public'
+}
+
+task copyDB(type: Copy) {
+    from '.'
+    include 'index.db'
+    into 'build/libs'
+}
+
+task zip(type: Zip, dependsOn: [copyPublic, copyDB, jar]) {
+    from 'build/libs'
+    into '/'
+    baseName = 'Cyberminer'
+}
+
+build.dependsOn copyPublic, copyDB, zip

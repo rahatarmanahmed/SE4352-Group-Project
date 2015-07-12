@@ -6,9 +6,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles the connection and communication with the SQLite database.
+ */
 public class Database {
 
-
+    /**
+     * Inserts a Line into the database.
+     */
     public static synchronized boolean insert(Line line) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             PreparedStatement statement = connection.prepareStatement(
@@ -44,6 +49,9 @@ public class Database {
         return true;
     }
 
+    /**
+     * Deletes a line from the database.
+     */
     public static synchronized boolean delete(int id) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             PreparedStatement statement = connection.prepareStatement(
@@ -68,6 +76,9 @@ public class Database {
         return true;
     }
 
+    /**
+     * Returns all lines in the database.
+     */
     public static synchronized JsonArray getAll() {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             PreparedStatement statement = connection.prepareStatement(
@@ -92,6 +103,11 @@ public class Database {
         }
     }
 
+    /**
+     * Searches for lines in the database that contain words in keywords.
+     * Operation can be either "OR", "AND", or "NOT"
+     * Case sensitive sets whether the search is case sensitive or not
+     */
     public static synchronized JsonArray search(String[] keywords, String operation, Boolean caseSensitive) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             if(caseSensitive) connection.prepareStatement("PRAGMA case_sensitive_like = true").execute();
@@ -136,6 +152,9 @@ public class Database {
         }
     }
 
+    /**
+     * Increments the click counter on a line
+     */
     public static synchronized boolean incrementClicks(int id) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             PreparedStatement statement = connection.prepareStatement(
@@ -151,6 +170,9 @@ public class Database {
         return true;
     }
 
+    /**
+     * Retrieves auto complete suggestions for a query.
+     */
     public static synchronized JsonArray autoComplete(String query) {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:index.db")) {
             PreparedStatement statement = connection.prepareStatement(

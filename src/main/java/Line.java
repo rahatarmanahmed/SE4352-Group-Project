@@ -29,10 +29,16 @@ public class Line {
 		this.words = description.split("\\s+");
 	}
 
+    /**
+     * Returns the url of this input line.
+     */
 	public String getUrl() {
 		return url;
 	}
 
+    /**
+     * Returns the description of this input line
+     */
 	public String getDescription() {
 		return String.join(" ", words);
 	}
